@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <title>Image Upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="static/dropzone.js"></script>
+	
+	<link href="static/bootstrap.min.css" rel="stylesheet" media="screen" />
+	<link rel="stylesheet" href="static/dropzone.css" />
+	
+	<script type="text/javascript">
+		Dropzone.options.myDropzone = {
+
+		  // Prevents Dropzone from uploading dropped files immediately
+		  autoProcessQueue: false,
+		  dictDefaultMessage: "Drop images here to classify",
+
+		  init: function() {
+			var submitButton = document.querySelector("#submit")
+			myDropzone = this; // closure
+
+			submitButton.addEventListener("click", function() {
+			  myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+			});
+			
+			// Clear contents 
+			var clearButton = document.querySelector("#clearAll")
+			clearButton.addEventListener("click", function() {
+			  myDropzone.removeAllFiles();
+			  document.getElementById("tableWrapper").innerHTML = "";
+			  document.getElementById('predhead').innerHTML = "";
+			});
+			
+			
+			// You might want to show the submit button only when files are dropped here:
+			this.on("addedfile", function() {
+			  // Show submit button here and/or inform user to click it.
+			});
+			
+			this.on("success", function(file, responseText) {
+			  if (responseText.success) {
+				document.getElementById('predhead').innerHTML = "Predicted value of the Image(s):<br />";
+				
+				var tableData = responseText.predictions;
+				var output = document.getElementById("tableWrapper").innerHTML 
+				
+				output += "<table border=1>";
+				output += "<tr><th>Object</th> <th>Percentage</th></tr>";
+				for (var j = 0; j < tableData.length; j++) {
+				   output += "<tr>";
+				   output += "<td width='180'>" + tableData[j].label + "</td>";
+				   output += "<td width='200'>" + tableData[j].probability + "</td>";
+				   output += "</tr>";
+				}
+				output += "</table>";
+				output += "<br />"
+				document.getElementById("tableWrapper").innerHTML = output;
+			  }
+			});   // this.on("success") ends
+			
+		  }
+		};
+
+	</script>
+  </head>
+  
+  <body>
+    <div class="container">
+      <h2>Upload Image(s) to classify</h2><br>
+		<form action="/predict" class="dropzone" id="my-dropzone"></form>
+		<br>
+		<button id="clearAll"><b>Clear Image</b></button> &nbsp; &nbsp; &nbsp;
+		<button id="submit"><b>Classify Image</b></button>
+		<br>
+		<hr style='height:1px;border:none;color:blue;background-color:blue;' />
+		
+		<p>
+			<b id="predhead"></b> <br />
+			<b id="tableWrapper"></b>
+		</p>
+    </div>	
+  </body>
+</html>
