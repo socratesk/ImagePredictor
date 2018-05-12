@@ -14,6 +14,9 @@ import io
 # Create an application object
 app = Flask(__name__)
 
+model = ResNet50(weights="imagenet")
+graph = tf.get_default_graph()
+
 # Render image upload page
 @app.route('/upload')
 def upload():
@@ -108,5 +111,5 @@ def home():
 # start the server with the 'run()' method
 if __name__ == "__main__":
 	print(("*Starting server... \n Please wait until server has fully started"))
-	load_model()
+	#load_model()
 	app.run()
