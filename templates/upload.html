@@ -1,83 +1,92 @@
 <html>
   <head>
-    <title>Image Upload</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="static/dropzone.js"></script>
-	
-	<link href="static/bootstrap.css" rel="stylesheet" media="screen" />
-	<link rel="stylesheet" href="static/dropzone.css" />
-	
-	<script type="text/javascript">
-		Dropzone.options.myDropzone = {
+      <title>Image Upload</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	    <script src="static/dropzone.js"></script>
 
-		  // Prevents Dropzone from uploading dropped files immediately
-		  autoProcessQueue: false,
-		  dictDefaultMessage: "Drop images here to classify",
+      <link rel="stylesheet" href="static/bgimageset.css" />
+	    <link rel="stylesheet" href="static/bootstrap.css" media="screen" />
+      <link rel="stylesheet" href="static/dropzone.css" />
 
-		  init: function() {
-			var submitButton = document.querySelector("#submit")
-			myDropzone = this; // closure
+    	<script type="text/javascript">
+    		Dropzone.options.myDropzone = {
 
-			submitButton.addEventListener("click", function() {
-			  myDropzone.processQueue(); // Tell Dropzone to process all queued files.
-			});
-			
-			// Clear contents 
-			var clearButton = document.querySelector("#clearAll")
-			clearButton.addEventListener("click", function() {
-			  myDropzone.removeAllFiles();
-			  document.getElementById("tableWrapper").innerHTML = "";
-			  document.getElementById('predhead').innerHTML = "";
-			});
-			
-			
-			// You might want to show the submit button only when files are dropped here:
-			this.on("addedfile", function() {
-			  // Show submit button here and/or inform user to click it.
-			});
-			
-			this.on("success", function(file, responseText) {
-			  if (responseText.success) {
-				document.getElementById('predhead').innerHTML = "Predicted value of the Image(s):<br />";
-				
-				var tableData = responseText.predictions;
-				var output = document.getElementById("tableWrapper").innerHTML 
-				
-				output += "<table border=1>";
-				output += "<tr><th>Object</th> <th>Percentage</th></tr>";
-				for (var j = 0; j < tableData.length; j++) {
-				   output += "<tr>";
-				   output += "<td width='180'>" + tableData[j].label + "</td>";
-				   output += "<td width='200'>" + tableData[j].probability + "</td>";
-				   output += "</tr>";
-				}
-				output += "</table>";
-				output += "<br />"
-				document.getElementById("tableWrapper").innerHTML = output;
-			  }
-			});   // this.on("success") ends
-			
-		  }
-		};
+    		  // Prevents Dropzone from uploading dropped files immediately
+    		  autoProcessQueue: false,
+    		  dictDefaultMessage: "<b>Drop images here to classify</b>",
+          acceptedFiles: "image/*",
+          background: "blue",
 
-	</script>
+    		  init: function() {
+          			var submitButton = document.querySelector("#submit")
+          			myDropzone = this; // closure
+
+          			submitButton.addEventListener("click", function() {
+          			  myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+          			});
+
+          			// Clear contents
+          			var clearButton = document.querySelector("#clearAll")
+          			clearButton.addEventListener("click", function() {
+          			  myDropzone.removeAllFiles();
+          			  document.getElementById("tableWrapper").innerHTML = "";
+          			  document.getElementById('predhead').innerHTML = "";
+          			});
+
+          			// You might want to show the submit button only when files are dropped here:
+          			this.on("addedfile", function() {
+          			  // Show submit button here and/or inform user to click it.
+          			});
+
+          			this.on("success", function(file, responseText) {
+          			  if (responseText.success) {
+          				document.getElementById('predhead').innerHTML = "Predicted value of the Image(s):<br />";
+
+          				var tableData = responseText.predictions;
+          				var output = document.getElementById("tableWrapper").innerHTML
+
+          				output += "<table border=1>";
+          				output += "<tr><th>Object</th> <th>Percentage</th></tr>";
+          				for (var j = 0; j < tableData.length; j++) {
+          				   output += "<tr>";
+          				   output += "<td width='180'>" + tableData[j].label + "</td>";
+          				   output += "<td width='200'>" + tableData[j].probability + "</td>";
+          				   output += "</tr>";
+          				}
+          				output += "</table>";
+          				output += "<br />"
+          				document.getElementById("tableWrapper").innerHTML = output;
+          			  }
+          			});   // this.on("success") ends
+
+    		  }
+    		};
+    	</script>
   </head>
-  
-  <body>
+
+  <body class="bg">
     <div class="container">
-      <h2>Upload Image(s) to classify</h2><br>
-		<form action="/predict" class="dropzone" id="my-dropzone"></form>
-		<br>
-		<button id="clearAll"><b>Clear Image</b></button> &nbsp; &nbsp; &nbsp;
-		<button id="submit"><b>Classify Image</b></button>
-		<br>
-		<hr style='height:1px;border:none;color:blue;background-color:blue;' />
-		
-		<p>
-			<b id="predhead"></b> <br />
-			<b id="tableWrapper"></b>
-		</p>
-    </div>	
+      <br> <center><h2>An Interactive Image Classification Application</h2></center><br>
+
+      <h5>This interactive web application classifies one or more uploaded images using pre-trained ResNet-50 Deep Learning Neural Net model.
+      This application is hosted on <a href="http://www.heroku.com">Heroku</a> - a cloud-based platform service (PaaS) provider.<br><br>
+      This can be extended to leverage user-trained models as well.</h5><br>
+
+      <h6>Upload Image(s) to classify</h6>
+
+  		<form action="/predict" class="dropzone" id="my-dropzone"></form>
+  		<button id="clearAll"><b>Clear Image</b></button> &nbsp; &nbsp; &nbsp;
+  		<button id="submit"><b>Classify Image</b></button>
+  		<br>
+
+  		<hr style='height:1px;border:none;color:blue;background-color:blue;' />
+
+  		<p>
+  			<b id="predhead"></b> <br/>
+  			<b id="tableWrapper"></b>
+  		</p>
+
+    </div>
   </body>
 </html>
